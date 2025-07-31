@@ -44,7 +44,10 @@ public class UserService {
     private UserDto toDto(User user) {
         // TODO рассмотреть MapStruct или писать конвертеры вручную
         UserDto dto = new UserDto();
-        BeanUtils.copyProperties(user, dto); //NOTE should not be used in real life
+        dto.setUsername(user.getUsername());
+        dto.setFullName(user.getFullName());
+        dto.setRoles(user.getRoles());
+        dto.setBalance(user.getBalance());
         return dto;
     }
 }
