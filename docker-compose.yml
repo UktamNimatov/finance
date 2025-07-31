@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: finance-db
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./src/main/resources/sql/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql:ro
+      - ./src/main/resources/sql/data.sql:/docker-entrypoint-initdb.d/2-data.sql:ro
+
+  app:
+    build: .
+    container_name: finance-app
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      JWT_SECRET: y7K8s0Pq2X9Rv4HdU5Jm1Zt3Wq6Ne8B4
+      JWT_EXPIRATION_MS: 3600000
+    ports:
+      - "8080:8080"
+    restart: on-failure
+
+volumes:
+  db_data: 
